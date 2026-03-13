@@ -3,26 +3,15 @@ import "package:test/test.dart";
 import 'package:task_manager/models/task.dart';
 
 void main() {
-  Task createTask({
-    String id = '1',
-    String title = 'Test Task',
-    String description = '',
-    Priority priority = Priority.medium,
-    DateTime? dueDate,
-    bool isCompleted = false,
-  }) {
-    return Task(
-      id: id,
-      title: title,
-      description: description,
-      priority: priority,
-      dueDate: dueDate ?? DateTime.now(),
-    );
-  }
+  Task createTask() => Task(
+    id: '1',
+    title: 'Test Task',
+    dueDate: DateTime.now(),
+  );
   group("Task Model - Constructor and Properties", () {
     late Task task;
     setUp(() {
-      task = createTask(dueDate: DateTime(2025, 1, 1, 12, 0));
+      task = createTask().copyWith(dueDate: DateTime(2025, 1, 1, 12, 0));
     });
     test("returns true when task default values are correct", () {
       expect([task.description, task.isCompleted], [isEmpty, isFalse]);
@@ -40,7 +29,7 @@ void main() {
   group("Task Model - copyWith()", () {
     late Task task;
     setUp(() {
-      task = createTask(
+      task = createTask().copyWith(
         description: 'test',
         priority: Priority.low,
         isCompleted: true,
@@ -123,17 +112,13 @@ void main() {
   group("Task Model - isOverdue getter", () {
     late Task task;
     setUp(() {
-      task = createTask(dueDate: DateTime(2026, 1, 1, 12, 0));
+      task = createTask().copyWith(dueDate: DateTime.now().subtract(Duration(days: 1)));
     });
     test("returns true when task is past dueDate and incomplete", () {
-      final overdueTask = task.copyWith(isCompleted: false);
-      expect(overdueTask.isOverdue, isTrue);
+      expect(task.isOverdue, isTrue);
     });
     test("returns false when task is before dueDate", () {
-      final overdueTask = task.copyWith(
-        dueDate: DateTime.now().add(Duration(days: 1)),
-        isCompleted: false,
-      );
+      final overdueTask = task.copyWith(dueDate: DateTime.now().add(Duration(days: 2)));
       expect(overdueTask.isOverdue, isFalse);
     });
     test("returns false when task is past dueDate and completed", () {
@@ -146,7 +131,7 @@ void main() {
     late Task deserializedTask;
     late Map<String, dynamic> json;
     setUp(() {
-      task = createTask(
+      task = createTask().copyWith(
         description: 'Testing JSON serialization',
         priority: Priority.high,
         isCompleted: false,
@@ -289,12 +274,12 @@ void main() {
     });
     test("returns true when service filter only retrieves active tasks", () {
       final activeTasks = taskService.getByStatus(completed: false);
-      expect(activeTasks.first.id, contains(task.id));
+      expect(activeTasks.first.id, equals(task.id));
     });
     test("returns true when service filter only retrieves completed tasks", () {
       taskService.toggleComplete('1');
       final completedTasks = taskService.getByStatus(completed: true);
-      expect(completedTasks.first.id, contains(task.id));
+      expect(completedTasks.first.id, equals(task.id));
     });
   });
   group("TaskService - sortByPriority()", () {
@@ -320,7 +305,7 @@ void main() {
       },
     );
     test("returns true when original list is unchanged", () {
-      final originalTasks = taskService.allTasks;
+      final originalTasks = List.of(taskService.allTasks);
       taskService.sortByPriority();
       expect(
         [
@@ -340,7 +325,7 @@ void main() {
 
     setUp(() {
       taskService = TaskService();
-      task = createTask(dueDate: DateTime(2025, 1, 2, 12, 0));
+      task = createTask().copyWith(dueDate: DateTime(2025, 1, 2, 12, 0));
 
       lowPriorityTask = task.copyWith(
         id: '2',
@@ -362,7 +347,7 @@ void main() {
       },
     );
     test("returns true when original list is unchanged", () {
-      final originalTasks = taskService.allTasks;
+      final originalTasks = List.of(taskService.allTasks);
       taskService.sortByDueDate();
       expect(
         [
@@ -381,7 +366,7 @@ void main() {
     late Task overdueTask;
     setUp(() {
       taskService = TaskService();
-      task = createTask(dueDate: DateTime.now().add(Duration(days: 1)));
+      task = createTask().copyWith(dueDate: DateTime.now().add(Duration(days: 1)));
 
       completedTask = task.copyWith(id: '2', isCompleted: true);
       overdueTask = task.copyWith(
