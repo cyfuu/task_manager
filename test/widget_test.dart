@@ -72,23 +72,21 @@ void main() {
     testWidgets('returns true when onToggle is called when tapping checkbox', 
     (WidgetTester tester) async {
       bool toggle = false;
-
       await tester.pumpWidget(buildTaskTile(
         task: task, 
         onToggle: () {
           toggle = true;
         }, 
         onDelete: () {}
-        ));
+      ));
 
-        await tester.tap(find.byType(Checkbox));
-        await tester.pump();
-        expect(toggle, isTrue);
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      expect(toggle, isTrue);
     });
     testWidgets('returns true when onToggle is called exactly once', 
     (WidgetTester tester) async {
       int count = 0;
-
       await tester.pumpWidget(buildTaskTile(
         task: task, 
         onToggle: () {
@@ -100,6 +98,69 @@ void main() {
       await tester.tap(find.byType(Checkbox));
       await tester.pump();
       expect(count, equals(1));
+    });
+  });
+  group('TaskTile - Delete Interaction', () {
+    setUp(() {
+      task = buildTask();
+    });
+    testWidgets('returns true when onDelete is called when tapping delete button', 
+    (WidgetTester tester) async {
+      bool deleted = false;
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {}, 
+        onDelete: () {
+          deleted = true;
+        }
+      ));
+
+      await tester.tap(find.byIcon(Icons.delete));
+      await tester.pump();
+      expect(deleted, isTrue);
+    });
+    testWidgets('returns true when onDelete is called exactly once', 
+    (WidgetTester tester) async {
+      int count = 0;
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {},
+        onDelete: () {
+          count++;
+        }
+      ));
+
+      await tester.tap(find.byIcon(Icons.delete));
+      await tester.pump();
+      expect(count, equals(1));
+    });
+  });
+  group('TaskTile - Completed State UI', () {
+    setUp(() {
+      task = buildTask().copyWith(isCompleted: true);
+    });
+    testWidgets('returns true when LineThrough is visible during isCompleted state', 
+    (WidgetTester tester) async {
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {}, 
+        onDelete: () {}
+      ));
+
+      final textWidget = tester.widget<Text>(find.text(task.title));
+      expect(textWidget.style?.decoration, equals(TextDecoration.lineThrough));
+    });
+    testWidgets('returns true when LineThrough is invisible during incomplete state', 
+    (WidgetTester tester) async {
+      task = buildTask().copyWith(isCompleted: false);
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {}, 
+        onDelete: () {}
+      ));
+
+      final textWidget = tester.widget<Text>(find.text(task.title));
+      expect(textWidget.style?.decoration, equals(TextDecoration.none));
     });
   });
 }
