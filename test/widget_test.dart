@@ -163,4 +163,30 @@ void main() {
       expect(textWidget.style?.decoration, equals(TextDecoration.none));
     });
   });
+  group('TaskTile - Key Assertions', () {
+    setUp(() {
+      task = buildTask();
+    });
+    testWidgets('returns true when TaskTile ValueKey matches Task ID', 
+    (WidgetTester tester) async {
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {}, 
+        onDelete: () {}
+      ));
+
+      expect(find.byKey(ValueKey(task.id)), findsOneWidget);
+    });
+    testWidgets('returns true when Checkbox and Delete button keys are correct', 
+    (WidgetTester tester) async {
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {}, 
+        onDelete: () {}
+      ));
+
+      expect(find.byKey(Key('checkbox_${task.id}')), findsOneWidget);
+      expect(find.byKey(Key('delete_${task.id}')), findsOneWidget);
+    });
+  });
 }
