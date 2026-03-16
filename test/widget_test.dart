@@ -89,6 +89,17 @@ void main() {
     (WidgetTester tester) async {
       int count = 0;
 
+      await tester.pumpWidget(buildTaskTile(
+        task: task, 
+        onToggle: () {
+          count++;
+        }, 
+        onDelete: () {}
+      ));
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      expect(count, equals(1));
     });
   });
 }
