@@ -243,14 +243,14 @@ void main() {
       task = createTask();
     });
     test(
-      "returns true when a task completion status is toggled from false to true", () {
+      "returns true when task completion status is toggled from false to true", () {
         taskService.addTask(task);
         taskService.toggleComplete('1');
         expect(taskService.allTasks.first.isCompleted, isTrue);
       },
     );
     test(
-      "returns true when a task completion status is toggled from true to false", () {
+      "returns true when task completion status is toggled from true to false", () {
         final toggledTask = task.copyWith(isCompleted: true);
         taskService.addTask(toggledTask);
         taskService.toggleComplete('1');
@@ -258,7 +258,7 @@ void main() {
       },
     );
     test(
-      "returns true when a task completion status is toggled for an unknown task ID throws a StateError", () {
+      "returns true when toggling unknown task ID throws a StateError", () {
         expect(() => taskService.toggleComplete('0'), throwsStateError);
       },
     );
