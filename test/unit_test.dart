@@ -104,7 +104,7 @@ void main() {
           task.description,
           task.priority,
           task.dueDate,
-          task.isCompleted,
+          isTrue,
         ]),
       );
     });
@@ -157,7 +157,7 @@ void main() {
             task.description,
             task.priority,
             task.dueDate,
-            task.isCompleted,
+            isFalse,
           ]),
         );
       },
