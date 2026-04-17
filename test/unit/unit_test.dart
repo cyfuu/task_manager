@@ -1,13 +1,10 @@
-import "package:task_manager/services/task_service.dart";
-import "package:test/test.dart";
+import 'package:task_manager/services/task_service.dart';
+import 'package:test/test.dart';
 import 'package:task_manager/models/task.dart';
 
 void main() {
-  Task createTask() => Task(
-    id: '1',
-    title: 'Test Task',
-    dueDate: DateTime.now(),
-  );
+  Task createTask() =>
+      Task(id: '1', title: 'Test Task', dueDate: DateTime.now());
   group("Task Model - Constructor and Properties", () {
     late Task task;
     setUp(() {
@@ -104,7 +101,7 @@ void main() {
           task.description,
           task.priority,
           task.dueDate,
-          isTrue,
+          task.isCompleted,
         ]),
       );
     });
@@ -112,13 +109,17 @@ void main() {
   group("Task Model - isOverdue getter", () {
     late Task task;
     setUp(() {
-      task = createTask().copyWith(dueDate: DateTime.now().subtract(Duration(days: 1)));
+      task = createTask().copyWith(
+        dueDate: DateTime.now().subtract(Duration(days: 1)),
+      );
     });
     test("returns true when task is past dueDate and incomplete", () {
       expect(task.isOverdue, isTrue);
     });
     test("returns false when task is before dueDate", () {
-      final overdueTask = task.copyWith(dueDate: DateTime.now().add(Duration(days: 2)));
+      final overdueTask = task.copyWith(
+        dueDate: DateTime.now().add(Duration(days: 2)),
+      );
       expect(overdueTask.isOverdue, isFalse);
     });
     test("returns false when task is past dueDate and completed", () {
@@ -141,7 +142,8 @@ void main() {
       deserializedTask = Task.fromJson(json);
     });
     test(
-      "returns true when task is serialized to JSON and deserialized back", () {
+      "returns true when task is serialized to JSON and deserialized back",
+      () {
         expect(
           [
             deserializedTask.id,
@@ -157,13 +159,14 @@ void main() {
             task.description,
             task.priority,
             task.dueDate,
-            isFalse,
+            task.isCompleted,
           ]),
         );
       },
     );
     test(
-      "returns true when field types are preserved after serialization and deserialization", () {
+      "returns true when field types are preserved after serialization and deserialization",
+      () {
         expect(
           [
             deserializedTask.id,
@@ -185,7 +188,8 @@ void main() {
       },
     );
     test(
-      "returns true when priority index mapping is correct after serialization and deserialization", () {
+      "returns true when priority index mapping is correct after serialization and deserialization",
+      () {
         expect(deserializedTask.priority.index, equals(json['priority']));
       },
     );
@@ -202,7 +206,8 @@ void main() {
       expect(taskService.allTasks, hasLength(1));
     });
     test(
-      "returns true when service throws argument error for empty task title", () {
+      "returns true when service throws argument error for empty task title",
+      () {
         final emptyTask = task.copyWith(title: '');
         expect(() => taskService.addTask(emptyTask), throwsArgumentError);
       },
@@ -229,7 +234,8 @@ void main() {
       expect(taskService.allTasks, isNot(contains(task)));
     });
     test(
-      "returns true when a non-existent task is attempted to be deleted from service", () {
+      "returns true when a non-existent task is attempted to be deleted from service",
+      () {
         taskService.deleteTask('0');
         expect(taskService.allTasks, contains(task));
       },
@@ -243,25 +249,25 @@ void main() {
       task = createTask();
     });
     test(
-      "returns true when task completion status is toggled from false to true", () {
+      "returns true when task completion status is toggled from false to true",
+      () {
         taskService.addTask(task);
         taskService.toggleComplete('1');
         expect(taskService.allTasks.first.isCompleted, isTrue);
       },
     );
     test(
-      "returns true when task completion status is toggled from true to false", () {
+      "returns true when task completion status is toggled from true to false",
+      () {
         final toggledTask = task.copyWith(isCompleted: true);
         taskService.addTask(toggledTask);
         taskService.toggleComplete('1');
         expect(taskService.allTasks.first.isCompleted, isFalse);
       },
     );
-    test(
-      "returns true when toggling unknown task ID throws a StateError", () {
-        expect(() => taskService.toggleComplete('0'), throwsStateError);
-      },
-    );
+    test("returns true when toggling unknown task ID throws a StateError", () {
+      expect(() => taskService.toggleComplete('0'), throwsStateError);
+    });
   });
   group("TaskService - getByStatus()", () {
     late Task task;
@@ -299,7 +305,8 @@ void main() {
       taskService.addTask(highPriorityTask);
     });
     test(
-      "returns true when service is sorted by priority with high priority first", () {
+      "returns true when service is sorted by priority with high priority first",
+      () {
         final sortedTasks = taskService.sortByPriority();
         expect(sortedTasks.first.priority, equals(highPriorityTask.priority));
       },
@@ -341,7 +348,8 @@ void main() {
       taskService.addTask(highPriorityTask);
     });
     test(
-      "returns true when service is sorted by due date with earliest date first", () {
+      "returns true when service is sorted by due date with earliest date first",
+      () {
         final sortedTasks = taskService.sortByDueDate();
         expect(sortedTasks.first.dueDate, equals(highPriorityTask.dueDate));
       },
@@ -366,7 +374,9 @@ void main() {
     late Task overdueTask;
     setUp(() {
       taskService = TaskService();
-      task = createTask().copyWith(dueDate: DateTime.now().add(Duration(days: 1)));
+      task = createTask().copyWith(
+        dueDate: DateTime.now().add(Duration(days: 1)),
+      );
 
       completedTask = task.copyWith(id: '2', isCompleted: true);
       overdueTask = task.copyWith(
