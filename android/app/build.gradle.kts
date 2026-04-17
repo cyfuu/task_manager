@@ -39,12 +39,12 @@ android {
 
     signingConfigs {
         release {
-            keyAlias = keystoreProperties['keyAlias'] ?: System.getenv("KEY_ALIAS")
-            keyPassword = keystoreProperties['keyPassword'] ?: System.getenv("KEY_PASSWORD")
-            storeFile = keystoreProperties['storeFile']?.let { 
+            keyAlias = keystoreProperties["keyAlias"] ?: System.getenv("KEY_ALIAS")
+            keyPassword = keystoreProperties["keyPassword"] ?: System.getenv("KEY_PASSWORD")
+            storeFile = keystoreProperties["storeFile"]?.let { 
                 file(it) 
             } ?: file(System.getenv("KEYSTORE_PATH"))
-            storePassword = keystoreProperties['storePassword'] ?: System.getenv("STORE_PASSWORD")
+            storePassword = keystoreProperties["storePassword"] ?: System.getenv("STORE_PASSWORD")
         }
     }
     
