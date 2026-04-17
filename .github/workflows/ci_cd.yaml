@@ -148,16 +148,18 @@ jobs:
         run: flutter pub get
  
       - name: Decode keystore
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > \
             android/app/keystore.jks
- 
+
       - name: Build release APK
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           flutter build apk --release \
             --dart-define=ENV=production
         env:
-          KEYSTORE_PATH: android/app/keystore.jks
+          KEYSTORE_PATH: ${{ github.workspace }}/android/app/keystore.jks
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
