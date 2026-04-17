@@ -40,14 +40,14 @@ android {
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias'] \
-                ?: System.getenv('KEY_ALIAS')
+                ?: System.getenv("KEY_ALIAS")
             keyPassword keystoreProperties['keyPassword'] \
-                ?: System.getenv('KEY_PASSWORD')
+                ?: System.getenv("KEY_PASSWORD")
             storeFile keystoreProperties['storeFile'] ?
                 file(keystoreProperties['storeFile']) :
-                file(System.getenv('KEYSTORE_PATH'))
+                file(System.getenv("KEYSTORE_PATH"))
             storePassword keystoreProperties['storePassword'] \
-                ?: System.getenv('STORE_PASSWORD')
+                ?: System.getenv("STORE_PASSWORD")
         }
     }
     
